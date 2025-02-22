@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My website</title>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 200px;
+            height: 100vh;
+            background-color: #181818;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 0;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #282828;
+            border-radius: 5px;
+            padding-left: 10px;
+        }
+        .content {
+            padding: 20px;
+        }
+        .Home-header {
+            margin: 10px 20px;
+            padding-bottom: 20px;
+            border: 2px solid rgb(169, 168, 168);
+            border-radius: 10px;
+            text-align: center;
+            padding: 10px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .control-btn {
+            padding: 10px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .control-btn:hover {
+            background-color: #383938;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>My website</h2>
+         
+        <a href="#">Home</a>
+        <a href="calender.html">My budget</a>
+        <a href="">My fav Music </a>
+        <a href="#">Settings</a>
+    </div>
+    <div class="content">
+        <div class="Home"></div>
+    </div>
+
+    <script>
+        const Music = [
+            { id: 1, name: "Chinnataname", artist: "S.P.Balasubramaniam", img: "Images/download.jpeg", src: "Music/Chinnataname.mp3" },
+            { id: 2, name: "Pichonne Ayipoy", artist: "S.P.Balasubramaniam", img: "Images/Winner-2017jpeg.jpg", src: "Music/Pichonne.mp3" },
+            { id: 3, name: "Chandrullo Undey", artist: "S.P.Balasubramaniam", img: "Images/Nuvvostanante.jpeg", src: "Music/Chandrullo.mp3" }
+        ];
+
+        let currentAudio = null;
+        let currentButton = null;
+        let index = 0;
+        audio(index);
+
+        function audio(index) {
+            let hi = Music[index];
+            let aud = `
+                <div class="Home-header">
+                    <img src="${hi.img}" alt="${hi.name}" width="150" height="150">
+                    <div class="controls">
+                        <audio id="${hi.name}">
+                            <source src="${hi.src}" type="audio/mpeg">
+                        </audio>
+                        <button class="control-btn" onclick="pre(${index})">⏮</button>
+                        <button class="control-btn play-btn" onclick="togglePlay(this, '${hi.name}')">▶</button>
+                        <button class="control-btn" onclick="next(${index})">⏭</button>
+                    </div>
+                </div>`;
+            document.querySelector(".Home").innerHTML = aud;
+        }
+
+        function next(index) {
+            if (index < Music.length - 1) {
+                audio(index + 1);
+            }
+        }
+        
+        function pre(index) {
+            if (index > 0) {
+                audio(index - 1);
+            }
+        }
+
+        function togglePlay(button, audioId) {
+            let audio = document.getElementById(audioId);
+            if (audio.paused) {
+                audio.play();
+                button.innerText = "❚❚";
+                currentAudio = audio;
+                currentButton = button;
+            } else {
+                audio.pause();
+                button.innerText = "▶";
+                currentAudio = null;
+                currentButton = null;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Expenses</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background: linear-gradient(135deg, #000000, #333333);
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        
+        body::before {
+            content: "EXPENSES";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120px;
+            font-weight: bold;
+            color: rgba(192, 192, 192, 0.2);
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .container {
+            display: flex;
+            width: 60%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+        .form-container, .list-container {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-container {
+            padding-right: 20px;
+            border-right: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+        input {
+            background: #222;
+            color: #fff;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .expense-list {
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+            width: 90%;
+        }
+        .expense-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .delete-btn {
+            background: rgba(255, 255, 255, 0.2); /* Transparent background */
+            color: black; /* Black ❌ */
+            border: 1px solid black;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .delete-btn:hover {
+            background: rgba(0, 0, 0, 0.2); /* Slightly darker on hover */
+        }
+        .total-expense {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            background: #28a745;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>Expenses for <span id="selected-date"></span></h2>
+            <input type="text" id="expense-reason" placeholder="Reason">
+            <input type="number" id="expense-amount" placeholder="Amount">
+            <button onclick="addExpense()">Add Expense</button>
+        </div>
+        <div class="list-container">
+            <h3>Expense List</h3>
+            <div id="expenses" class="expense-list"></div>
+            <div id="total-expense" class="total-expense">Total: ₹0</div>
+            <button onclick="goBack()">Back to Calendar</button>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const date = params.get('date');
+        const month = params.get('month');
+        const year = params.get('year');
+        document.getElementById("selected-date").innerText = `${date}-${parseInt(month) + 1}-${year}`;
+        const storageKey = `expenses-${date}-${month}-${year}`;
+
+        function loadExpenses() {
+            const expenses = JSON.parse(localStorage.getItem(storageKey)) || [];
+            const expensesDiv = document.getElementById("expenses");
+            const totalExpenseDiv = document.getElementById("total-expense");
+            expensesDiv.innerHTML = "";
+            let total = 0;
+            expenses.forEach((expense, index) => {
+                total += parseFloat(expense.amount);
+                const div = document.createElement("div");
+                div.className = "expense-item";
+                div.innerHTML = `${expense.reason}: ₹${expense.amount} <button class="delete-btn" onclick="deleteExpense(${index})">❌</button>`;
+                expensesDiv.appendChild(div);
+            });
+            totalExpenseDiv.innerText = `Total: ₹${total}`;
+        }
+
+        function addExpense() {
+            const reason = document.getElementById("expense-reason").value;
+            const amount = document.getElementById("expense-amount").value;
+            if (!reason || !amount) {
+                alert("Please enter a reason and amount");
+                return;
+            }
+            const expenses = JSON.parse(localStorage.getItem(storageKey)) || [];
+            expenses.push({ reason, amount });
+            localStorage.setItem(storageKey, JSON.stringify(expenses));
+            loadExpenses();
+            document.getElementById("expense-reason").value = "";
+            document.getElementById("expense-amount").value = "";
+        }
+
+        function deleteExpense(index) {
+            const expenses = JSON.parse(localStorage.getItem(storageKey));
+            expenses.splice(index, 1);
+            localStorage.setItem(storageKey, JSON.stringify(expenses));
+            loadExpenses();
+        }
+
+        function goBack() {
+            window.location.href = "calender.html";
+        }
+
+        loadExpenses();
+    </script>
+</body>
+</html>

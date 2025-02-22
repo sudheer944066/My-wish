@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker with Calendar</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background: linear-gradient(135deg, #000000, #333333);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        #controls {
+            margin: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            background: #222;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        #calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            width: 90vw;
+            max-width: 800px;
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .day {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            box-shadow: 2px 2px 10px rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-direction: column;
+            transition: 0.3s;
+            color: #fff;
+        }
+        .day:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body>
+    <h2>Expense Tracker - Calendar View</h2>
+    <div id="controls">
+        <select id="month" onchange="updateCalendar()">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+        </select>
+        <select id="year" onchange="updateCalendar()"></select>
+    </div>
+    <div id="calendar"></div>
+    
+    <script>
+        function populateYears() {
+            const yearSelect = document.getElementById("year");
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear - 10; i <= currentYear + 10; i++) {
+                let option = document.createElement("option");
+                option.value = i;
+                option.innerText = i;
+                yearSelect.appendChild(option);
+            }
+            yearSelect.value = currentYear;
+        }
+        
+        function updateCalendar() {
+            const calendar = document.getElementById("calendar");
+            const month = document.getElementById("month").value;
+            const year = document.getElementById("year").value;
+            const daysInMonth = new Date(year, parseInt(month) + 1, 0).getDate();
+            
+            calendar.innerHTML = "";
+            for (let i = 1; i <= daysInMonth; i++) {
+                let day = document.createElement("div");
+                day.className = "day";
+                day.innerText = i;
+                day.onclick = function() { 
+                    window.location.href = `expenses.html?date=${i}&month=${month}&year=${year}`;
+                };
+                calendar.appendChild(day);
+            }
+        }
+        
+        populateYears();
+        document.getElementById("month").value = new Date().getMonth();
+        updateCalendar();
+    </script>
+</body>
+</html>
